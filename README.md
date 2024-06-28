@@ -7,3 +7,10 @@
 [[Code]](https://github.com/Liang-ZX/VectorNet/tree/master)
 
 # 1. Multi Modal Trajectory Prediction
+"Tnt: Target-driven trajectory prediction." Conference on Robot Learning. PMLR, 2021.
+[[Paper]](https://proceedings.mlr.press/v155/zhao21b)
+[[Code]](https://github.com/Henry1iu/TNT-Trajectory-Prediction)
+
+"Densetnt: End-to-end trajectory prediction from dense goal sets." Proceedings of the IEEE/CVF International Conference on Computer Vision. 2021.
+[[Paper]](https://openaccess.thecvf.com/content/ICCV2021/html/Gu_DenseTNT_End-to-End_Trajectory_Prediction_From_Dense_Goal_Sets_ICCV_2021_paper.html)
+[[Code]](https://github.com/Tsinghua-MARS-Lab/DenseTNT)
