@@ -172,4 +172,59 @@ $ϕ_{traj}$ = 경로 예측을위한 layer로 여기서는 단순한 MLP을 사�
 
 $p_i^{(L_t)}$ = 8번 항목에서 구한 최종 Feature를 의미하고 $L_t$는 8번 항목의 GNN layer의 횟수이다.  
 
-위의 수식은 MultiPath
+위의 수식은 MultiPath([[Paper]](https://arxiv.org/abs/1910.05449)) 방식의 Anchor Based 또는 variational RNN([[Paper]](https://proceedings.neurips.cc/paper/2015/hash/b618c3210e934362ac261db280128c22-Abstract.html))로 교체하여 더 좋은 성능을 낼 수 있다. 
+
+---
+
+### 10. Node Completion Auxiliary Task
+
+주행 객체와 HD Map간의 더 좋은 상호작용을 위해서 Auxiliary Graph Completion Task를 추가한다.
+
+Train하는 동안에 무작위로 PolyLine Feature를 mask처리한다. 
+
+그후에, mask가 씌인 Feature를 복구하려는 시도를 아래 수식으로한다.
+
+![수식7](https://github.com/DeepJaeHoon/Awesome-Trajectory-Prediction/assets/174041317/86db4959-fba2-4157-9a13-5f3f358e11aa)
+
+$ϕ_{node}$ = MLP로 실행되는 Node Feature Decoder이다.
+
+$ϕ_{node}$는 inference시에 사용하지 않는다.
+
+![수식8](https://github.com/DeepJaeHoon/Awesome-Trajectory-Prediction/assets/174041317/f6143ff6-1d0a-4480-b437-1134565d0db7)
+
+
+$p_i$는 완전 연결된 순서가 없는 graph이다.  mask된 $p_i$ feature를 식별(복구)하기위해서 $p_i$를 포함한 각 vector의 시작점의 최솟값을 구하여 $p_i^{(id)}$를 구한다. 
+
+그후에 $p_i^{(0)}$는 $p_i$와 $p_i^{(id)}$를 concatenation해서 구한다. 
+
+train시  $p_i^{(0)}$이 값을 사용한다.
+
+---
+
+### 11. Loss 함수 계산
+
+
+![수식9](https://github.com/DeepJaeHoon/Awesome-Trajectory-Prediction/assets/174041317/ebaed314-cad6-441c-96ba-71dc766f0382)
+
+
+$L_{traj}$는 Gaussian log-likelihood이다. 
+
+
+아래의 수식이 Gaussian log-likelihood이다.
+
+![gmm](https://github.com/DeepJaeHoon/Awesome-Trajectory-Prediction/assets/174041317/88ce14e6-1b41-442f-be7e-74d3bf633cba)
+
+K개의 Mode에 대해서 Ground Truth와 가장 가까운 Mode를 선택한다.
+
+가장 가까운 경로는 RMSE를 기준으로 삼는게 보통이다.
+
+선택한 Mode의 확률과 경로의 평균, 표준편차, 상관계수를 사용해서 Reggression하는 방식이다. 
+
+$L_{node}$는 Huber Loss를 사용하며 Node Feature를 예측하는 것이 목적이다. 
+
+Alpha는 loss의 가중치를 조절하는 파라미터이다. 
+
+
+
+
+
