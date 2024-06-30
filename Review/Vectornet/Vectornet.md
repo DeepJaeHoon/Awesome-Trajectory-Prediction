@@ -78,15 +78,98 @@ Poly Line의 ID는 각 차선의 ID 또는 Agent의 고유 식별 ID가 될 것�
 
 ---
 
-### 7. PolyLine Sub Graph 설계하기
+### 7. PolyLine SubGraph 설계하기
 
-spatial, semantic locality를 가지는 Node에 대해서 feature extraction을 위해, Vector level에서 동일한 PolyLine에 속하는 Vector들은 서로 연결돼있다고 가정한 계층적 구조를 가지는 Sub Graph 방식을 택한다.
+spatial, semantic locality를 가지는 Node에 대해서 feature extraction을 위해, Vector level에서 동일한 PolyLine에 속하는 Vector들은 서로 연결돼있다고 가정한 계층적 구조를 가지는 SubGraph 방식을 택한다.
 
+![그림2](https://github.com/DeepJaeHoon/Awesome-Trajectory-Prediction/assets/174041317/ae149436-7cc4-4985-9da8-faad08fa8f96)
 
 
 ![수식2](https://github.com/DeepJaeHoon/Awesome-Trajectory-Prediction/assets/174041317/edc062e9-935a-4e7a-9bd2-90328a49ab9c)
 
-SubGraph의 순전파 방식을 위의 수식과 같이 정의한다.
 
 
- 
+$v_i^{(l+1)}$ = i번째 node의 l+1번째 subgraph layer에서 Node Feature를 의미한다.
+
+$v_i^{(l)}$ = i번째 Node의 Node Feature를 의미한다.
+
+$g_{enc}$ = 모든 Node와 가중치를 공유하는 MLP를 사용하여 각 Node Feature를 변환한다.
+
+fully connected layer -> layer norm -> Relu 순으로 실행한다.
+
+
+$g_{agg}$ = i번째 Node와 인접한 Node에대해 Max Pooling 방식으로 정보를 모으는 함수이다.
+
+$ϕ_{rel}$ = Node $V_{i}$와 인접 Node 사이의 상관관계를 나타내며 Concatentaion을 실행한다. 
+
+
+위의 수식처럼 subgraph를 여러번 쌓지만, $g_{enc}$의 MLP 가중치는 서로 다르게 쌓는다.
+
+
+
+
+![수식3](https://github.com/DeepJaeHoon/Awesome-Trajectory-Prediction/assets/174041317/c759047c-0da0-4d24-8c46-7a019d451213)
+
+
+마지막 $v_i^{(l+1)}$의 값을 한 번 더 $g_{agg}$를 하여서 PolyLine Level에서의 Feature를 추출한다.
+위의 수식을 통해서 vector level feature에서 polyline level feature로 변환되었다. 
+
+논문에서는 위의 방식이 vector의 시작점과 끝점이 같고 나머지 요소가 비어있다면 PointNet([[Paper]](https://openaccess.thecvf.com/content_cvpr_2017/html/Qi_PointNet_Deep_Learning_CVPR_2017_paper.html))의 일반화된 표현이라고 설명했다.
+
+---
+
+### 8. 상호작용을 위해서 Global Graph 설계하기  
+
+7번 항목에서 Vector Feature를 subgraph 연산을 통해서 PolyLine Feature를 얻었다. 
+
+PolyLine은 다시 정리하면 각 차선이나 횡단보도 그리고 각 주행 객체들의 궤적이다. 
+
+주행 상황은 각 차량, 사람, 자전거등이 횡단보도나 신호 정보, 차선과 상호작용하면서 주행(운동)한다. 
+
+7번 항목에서 차선이나 주행 객체들이 가지는 개인적은 특성을 고려한 것이라면, 8번은 이들의 상호작용을 고려하는 단계라고 이해하면 편하다. 
+
+상호작용을 고려하는 식은 다음과 같다. 
+
+
+![수식4](https://github.com/DeepJaeHoon/Awesome-Trajectory-Prediction/assets/174041317/e927ba0b-0cb8-48db-b691-3ca3cd442b1c)
+
+
+$p_i^{(l)}$ = l번 째 layer에서 i번 째 PolyLine Node Feature이다.
+
+
+𝐴 = PolyLine 집합의 인접행렬이다.
+
+GNN = 단일 계층의 GNN을 의미하며, 이 논문에서는 Self-Attention을 의미한다.
+
+인접행렬 A는 Social LSTM([[Paper]](https://openaccess.thecvf.com/content_cvpr_2016/html/Alahi_Social_LSTM_Human_CVPR_2016_paper.html)) 방식을 참고하여, 특정 거리 이내의 PolyLine의 Node끼리 heuristic하게 연결할 수 있다.
+
+하지만, VectorNet에서는 인접행렬 A는 모든 PolyLine끼리 연결한 fully connected graph로 가정한다. 
+
+그렇기에, 인접행렬 A는 무시하고 아래와 같이 표현할 수 있다.
+
+
+![수식5](https://github.com/DeepJaeHoon/Awesome-Trajectory-Prediction/assets/174041317/23ad09e4-5fe2-4c2e-85d9-ad0de2042272)
+
+
+$P_{Q}$, $P_{K}$, $P_{V}$ = 모든 PolyLine에대해 하나의 행렬로 표현한 PolyLine Feature Matrix를 linear projection한 값이다
+
+위의 값을 self-attention을하여서 주행 객체와 HD Map이 서로의 관계를 파악할 수 있게한다.
+
+---
+
+### 9. 경로 예측하기
+
+항목 8번에서 구한 최종 Feature를 Decoding하는 과정이 필요하다. 
+
+Vectornet에서는 다음과 같이하였다. 
+
+
+![수식6](https://github.com/DeepJaeHoon/Awesome-Trajectory-Prediction/assets/174041317/5ee74693-dea8-43a1-880f-9351dea242fb)
+
+
+
+$ϕ_{traj}$ = 경로 예측을위한 layer로 여기서는 단순한 MLP을 사용한다.
+
+$p_i^{(L_t)}$ = 8번 항목에서 구한 최종 Feature를 의미하고 $L_t$는 8번 항목의 GNN layer의 횟수이다.  
+
+위의 수식은 MultiPath
