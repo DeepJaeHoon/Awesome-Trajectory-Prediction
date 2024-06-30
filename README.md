@@ -14,3 +14,7 @@
 "Densetnt: End-to-end trajectory prediction from dense goal sets." Proceedings of the IEEE/CVF International Conference on Computer Vision. 2021.
 [[Paper]](https://openaccess.thecvf.com/content/ICCV2021/html/Gu_DenseTNT_End-to-End_Trajectory_Prediction_From_Dense_Goal_Sets_ICCV_2021_paper.html)
 [[Code]](https://github.com/Tsinghua-MARS-Lab/DenseTNT)
+
+"Learning lane graph representations for motion forecasting." Computer Vision–ECCV 2020: 16th European Conference, Glasgow, UK, August 23–28, 2020, Proceedings, Part II 16. Springer International Publishing, 2020.
+[[Paper]](https://link.springer.com/chapter/10.1007/978-3-030-58536-5_32)
+[[Code]](https://github.com/uber-research/LaneGCN?tab=readme-ov-file)
