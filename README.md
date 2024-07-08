@@ -20,3 +20,6 @@
 "Learning lane graph representations for motion forecasting." Computer Vision–ECCV 2020: 16th European Conference, Glasgow, UK, August 23–28, 2020, Proceedings, Part II 16. Springer International Publishing, 2020.
 [[Paper]](https://link.springer.com/chapter/10.1007/978-3-030-58536-5_32)
 [[Code]](https://github.com/uber-research/LaneGCN?tab=readme-ov-file)
+
+"Lanercnn: Distributed representations for graph-centric motion forecasting." 2021 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS). IEEE, 2021.
+[[Paper]](https://ieeexplore.ieee.org/abstract/document/9636035)
