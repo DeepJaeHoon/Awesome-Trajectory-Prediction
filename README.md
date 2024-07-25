@@ -23,3 +23,8 @@
 
 * "Lanercnn: Distributed representations for graph-centric motion forecasting." 2021 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS). IEEE, 2021.
 [[Paper]](https://ieeexplore.ieee.org/abstract/document/9636035)
+
+# 2. LLM Based Trajectory Prediction
+
+* "VisionTrap: Vision-Augmented Trajectory Prediction Guided by Textual Descriptions." arXiv preprint arXiv:2407.12345 (2024).
+  [[Paper]](https://arxiv.org/pdf/1810.04805)
